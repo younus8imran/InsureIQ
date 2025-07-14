@@ -1,6 +1,6 @@
-# Medical Charges Predictor
+# Medical Charges MLOps Demo
 
-1. Clone the repo 
+1. Clone repo & place `insurance.csv` into `data/`
 2. Install deps: `pip install -r requirements.txt`
 3. Train models & log with MLflow:
    ```bash
