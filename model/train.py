@@ -19,7 +19,7 @@ import mlflow.sklearn
 
 import joblib
 
-DATA_PATH = "data/insurance_10k.csv"
+DATA_PATH = "data/medical_insurance.csv"
 MODEL_DIR = "artifacts/best_model"
 
 def load_data(path: str):
@@ -118,7 +118,12 @@ def train():
 
             mlflow.sklearn.log_model(
                 pipe,
-                name="model"
+                name="model", 
+                    input_example=X_train.sample(1, random_state=42),
+                    signature=mlflow.models.infer_signature(
+                        X_train.sample(100, random_state=42),
+                        y_train.sample(100, random_state=42)
+                    )
             )
 
             if rmse < best_rmse:
@@ -129,6 +134,7 @@ def train():
     # Save best model locally
     os.makedirs(MODEL_DIR, exist_ok=True)
     best_uri = f"runs:/{best_run}/model"
+    mlflow.register_model(best_uri, best_model_name)
     best_model = mlflow.sklearn.load_model(best_uri)
     joblib.dump(best_model, f"{MODEL_DIR}/{best_model_name}.joblib")
     print("Training complete. Best model saved at:", MODEL_DIR)

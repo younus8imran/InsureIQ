@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>InsureIQ – Medical-Charge Predictor</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 2rem; }
+    label { display: block; margin: .5rem 0; }
+    input, select { margin-left: .5rem; }
+    #out { margin-top: 1rem; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>Medical-Charge Predictor</h1>
+
+  <form id="f">
+    <label>Age: <input name="age" type="number" min="18" max="100" value="0" required></label>
+    <label>BMI: <input name="bmi" type="number" step="0.1" min="10" max="60" value="0.0" required></label>
+    <label>Children: <input name="children" type="number" min="0" max="10" value="0" required></label>
+
+    <label>Sex:
+      <select name="sex" required>
+        <option value="">Select smoker</option>
+        <option value="male">male</option>
+        <option value="female">female</option>
+      </select>
+    </label>
+
+    <label>Smoker:
+      <select name="smoker" required>
+        <option value="" >Select smoker</option>
+        <option value="yes">yes</option>
+        <option value="no">no</option>
+      </select>
+    </label>
+
+    <label>Region:
+      <select name="region" required>
+        <option value="" >Select region</option>
+        <option value="northwest">northwest</option>
+        <option value="northeast">northeast</option>
+        <option value="southeast">southeast</option>
+        <option value="southwest">southwest</option>
+      </select>
+    </label>
+
+    <button type="submit">Predict</button>
+  </form>
+
+  <pre id="out"></pre>
+
+  <script>
+  document.getElementById("f").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const form = Object.fromEntries(new FormData(e.target));
+    form.age      = Number(form.age);
+    form.bmi      = Number(form.bmi);
+    form.children = Number(form.children);
+
+    const res = await fetch("/predict", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(form)
+    });
+
+    if (!res.ok) {
+      document.getElementById("out").textContent = "Error: " + res.statusText;
+      return;
+    }
+    const json = await res.json();
+    document.getElementById("out").textContent =
+      "Estimated yearly charge: $" + json.charges.toFixed(2);
+  });
+  </script>
+</body>
+</html>
