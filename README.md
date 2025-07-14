@@ -34,10 +34,11 @@ Train models & log with MLflow
 
 ```
 Run the project locally using docker 
-Build the image
 ```bash
-#run once or whenever the code/Dockerfile changes
+#Build the image, run once or whenever the code/Dockerfile changes
+
 docker build -t insureiq .
+
 # run the container
 docker run -p 8000:8000 medical-cost-forecaster
 
